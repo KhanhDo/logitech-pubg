@@ -1,3 +1,7 @@
+# 25-11-2018
+Added support for Logitech keyboard G keys 1 through 6 
+
+
 # outdated/已過時
 
 在2018年5月3日的更新過後，後坐力表已經完全過時，
