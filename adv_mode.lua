@@ -5,7 +5,7 @@
 --grenade on/off
 grenade_key = g
 
----- key bind ----
+---- Logitech Mouse Buttons - Bind these ----
 
 local ump9_key = nil
 local akm_key = 8
@@ -16,7 +16,7 @@ local uzi_key = nil
 local qbz_key = 5
 local set_off_key = 6
 
----- keyboard ---- Only Support logitech G Keyboard
+---- Logitech KeyBoard G Buttons ---- Only Support logitech G Keyboard
 
 local ump9_gkey = 4 ---1 is use F1.
 local akm_gkey = 1
