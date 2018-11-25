@@ -53,7 +53,7 @@ local lighton_key = "scrolllock" ---start script,scrolllock lamp will be on.clos
 --- Your Sensitivity in Game 
 
 local vertical_sensitivity = 1.0 --- default is 0.7
-local target_sensitivity =  48 --- default is 50.0
+local target_sensitivity =  50 --- default is 50.0
 local scope_sensitivity = 50 --- default is 50.0
 local scope4x_sensitivity = 50 --- default is 50.0
 
