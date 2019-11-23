@@ -1,5 +1,6 @@
 # 23-11-2019
-You need to press both of left and right mouse key to get auto recoil.
+- You need to press both of left and right mouse key to get auto recoil.
+- Auto sit when fire
 
 # 25-11-2018
 Added support for Logitech keyboard G keys 1 through 6 
