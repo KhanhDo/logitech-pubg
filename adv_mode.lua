@@ -351,9 +351,13 @@ end
 ----------------          OnEvent          ------------------------------
 --------------------------------------------------------------------------
 local aim_mode = false
+local isSitting = false
+local lastrunningtime = 0
 
 function OnEvent(event, arg)
-    OutputLogMessage("event = %s, arg = %d\n", event, arg)
+   -- OutputLogMessage("event = %s, arg = %d\n", event, arg)
+
+	lastrunningtime = GetRunningTime();
 
     if (event == "PROFILE_ACTIVATED") then
         EnablePrimaryMouseButtonEvents(true)
@@ -364,11 +368,22 @@ function OnEvent(event, arg)
         ReleaseMouseButton(1)
     end
 
+	---enable recoil only on "mouse left and right" pressed at the same time
 	if(event == "MOUSE_BUTTON_PRESSED" and arg == 2) then
-		aim_mode = true
+		aim_mode = true --marked aimed flag (with holding right mouse key)
+
+		---prevent shit down with left shift - lshift - key
+		if not IsModifierPressed("lshift") then
+			PressKey("c")
+			isSitting = true
+		end
+	
 	elseif(event == "MOUSE_BUTTON_RELEASED" and arg == 2) then
 		aim_mode = false
+		ReleaseKey("c")
+		isSitting = false
 	end
+
 
     if (event == "MOUSE_BUTTON_PRESSED" and arg == set_off_key)
     or (event == "G_PRESSED" and arg == set_off_gkey) then
@@ -397,6 +412,27 @@ function OnEvent(event, arg)
             PressKey(fire_key)
             repeat
                 Sleep(30)
+				--OutputLogMessage("event 0")
+				---stand up when press left shift key during the fire
+					if IsModifierPressed("lshift") then
+						ReleaseKey("c")
+						isSitting = false
+					end
+					if not IsModifierPressed("lshift") then
+						PressKey("c")
+						isSitting = true
+					end
+
+					--[[
+					if( GetRunningTime() - lastrunningtime > 300 ) then
+						PressKey("e")
+					end
+
+					if( GetRunningTime() - lastrunningtime > 1300 ) then
+						ReleaseKey("e")
+						lastrunningtime = GetRunningTime()
+					end --]]
+
             until not IsMouseButtonPressed(1)
             ReleaseKey(fire_key)
         elseif((current_weapon == "m16a4") and not IsModifierPressed(ignore_key)) then
@@ -407,6 +443,8 @@ function OnEvent(event, arg)
                 MoveMouseRelative(0, recovery )
                 Sleep(intervals)
                 shoot_duration = shoot_duration + intervals
+
+				-- OutputLogMessage("event 1")
             until not IsMouseButtonPressed(1)
         else
             if auto_mode then
@@ -417,7 +455,10 @@ function OnEvent(event, arg)
                 MoveMouseRelative(0, recovery )
                 Sleep(intervals)
                 shoot_duration = shoot_duration + intervals
-                until not IsMouseButtonPressed(1)
+
+		
+				-- OutputLogMessage("event 2")
+		       until not IsMouseButtonPressed(1)
             else
                 local shoot_duration = 0.0
                 repeat
@@ -426,6 +467,9 @@ function OnEvent(event, arg)
                 MoveMouseRelative(0, recovery )
                 Sleep(intervals)
                 shoot_duration = shoot_duration + intervals
+
+				-- OutputLogMessage("event 3")
+
                 until not IsMouseButtonPressed(1)
             end
         end
@@ -434,6 +478,7 @@ function OnEvent(event, arg)
     end
 
     while (event == "MOUSE_BUTTON_PRESSED" and arg == 1 and IsModifierPressed(fast_loot_key) and fastloot) do
+		--OutputLogMessage("event 4")
         ReleaseMouseButton(1)
         PressMouseButton(1)
         for i = 0, 14 do
@@ -447,6 +492,8 @@ function OnEvent(event, arg)
         end
         Sleep(10)
     end
+
+	
 
     if (current_weapon == "none") then
         if IsKeyLockOn(lighton_key) then
