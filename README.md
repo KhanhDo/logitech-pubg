@@ -1,3 +1,8 @@
+#25-11-2019
+- auto sit right after fire when lshift holding (for sniper)
+- auto "e", sit, then "q" and lay down
+- lshift for "q" without auto "e"
+
 # 23-11-2019
 - You need to press both of left and right mouse key to get auto recoil.
 - Auto sit when fire
