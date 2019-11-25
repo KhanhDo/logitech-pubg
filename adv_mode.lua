@@ -10,7 +10,7 @@ local current_weapon = "none"
 
 ---- key bind ----
 
-local ump9_key = 4
+local ump9_key = 5
 local akm_key = nil
 local m16a4_key = nil
 local m416_key = nil
@@ -352,17 +352,17 @@ end
 --------------------------------------------------------------------------
 local aim_mode = false
 local isSitting = false
-local lastrunningtime = 0
+local laststartfiringtime = 0
 
 function OnEvent(event, arg)
-   -- OutputLogMessage("event = %s, arg = %d\n", event, arg)
+    OutputLogMessage("event = %s, arg = %d\n", event, arg)
 
-	lastrunningtime = GetRunningTime();
+	
 
     if (event == "PROFILE_ACTIVATED") then
         EnablePrimaryMouseButtonEvents(true)
     elseif event == "PROFILE_DEACTIVATED" then
-        current_weapon = "none"
+        current_weapon = "ump9"
         shoot_duration = 0.0
         ReleaseKey(fire_key)
         ReleaseMouseButton(1)
@@ -374,15 +374,52 @@ function OnEvent(event, arg)
 
 		---prevent shit down with left shift - lshift - key
 		if not IsModifierPressed("lshift") then
-			PressKey("c")
+			--PressKey("c")
 			isSitting = true
 		end
 	
 	elseif(event == "MOUSE_BUTTON_RELEASED" and arg == 2) then
 		aim_mode = false
-		ReleaseKey("c")
+		--ReleaseKey("c")
 		isSitting = false
 	end
+
+	if(event == "MOUSE_BUTTON_PRESSED" and arg == 4) then
+		--ReleaseKey("c")
+		isSitting = false
+	end
+
+	--get the first time the fire button pressed
+	if(event == "MOUSE_BUTTON_PRESSED" and arg == 1) then
+		laststartfiringtime = GetRunningTime();
+
+				---sniper fire, if left shift sit down right after the fire
+					if (IsModifierPressed("lshift") and isSitting == false) then
+						PressKey("c")
+						PressKey("q")
+						isSitting = true
+					end
+	end
+	if(event == "MOUSE_BUTTON_RELEASED" and arg == 1) then
+		ReleaseKey("q")	
+		ReleaseKey("c")
+		ReleaseKey("z")
+	end
+
+	if(event == "MOUSE_BUTTON_PRESSED" and arg == 2) then
+		laststartfiringtime = GetRunningTime();
+
+		if not (IsModifierPressed("lshift") ) then
+
+			PressKey("e")	
+
+		end
+	end
+	if(event == "MOUSE_BUTTON_RELEASED" and arg == 2) then
+		ReleaseKey("e")	
+	end
+
+
 
 
     if (event == "MOUSE_BUTTON_PRESSED" and arg == set_off_key)
@@ -391,7 +428,7 @@ function OnEvent(event, arg)
     elseif (event == "MOUSE_BUTTON_PRESSED" and arg == akm_key)
     or (event == "G_PRESSED" and arg == akm_gkey) then
         current_weapon = "akm"
-    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == m16a4_key)
+    elseif (event == "MOUSE_BUTTON_PRESSED" and arg == m16a4_key)	
     or (event == "G_PRESSED" and arg == m16a4_gkey) then
         current_weapon = "m16a4"
     elseif (event == "MOUSE_BUTTON_PRESSED" and arg == m416_key)
@@ -411,27 +448,32 @@ function OnEvent(event, arg)
         if ((current_weapon == "none") or IsModifierPressed(ignore_key)) then
             PressKey(fire_key)
             repeat
-                Sleep(30)
+                
 				--OutputLogMessage("event 0")
-				---stand up when press left shift key during the fire
-					if IsModifierPressed("lshift") then
-						ReleaseKey("c")
-						isSitting = false
-					end
-					if not IsModifierPressed("lshift") then
-						PressKey("c")
-						isSitting = true
-					end
+			
 
 					--[[
-					if( GetRunningTime() - lastrunningtime > 300 ) then
-						PressKey("e")
+					Try to e after 600ms from the fire begin, return to normal after 1500ms from the fire start
+					--]]				
+
+					if( (GetRunningTime() - laststartfiringtime) > 500 ) then
+						PressKey("c")
+					end 
+	
+					if( (GetRunningTime() - laststartfiringtime) > 1000 ) then						
+						PressKey("q")
 					end
 
-					if( GetRunningTime() - lastrunningtime > 1300 ) then
-						ReleaseKey("e")
-						lastrunningtime = GetRunningTime()
-					end --]]
+					if( (GetRunningTime() - laststartfiringtime) > 2500 ) then
+						PressKey("c")
+						ReleaseKey("q")						
+					end 
+
+					if( (GetRunningTime() - laststartfiringtime) > 2500 ) then
+						PressKey("z")
+					end 
+
+					Sleep(30)
 
             until not IsMouseButtonPressed(1)
             ReleaseKey(fire_key)
@@ -476,6 +518,9 @@ function OnEvent(event, arg)
     elseif (event == "MOUSE_BUTTON_RELEASED" and arg == 1) then
         ReleaseKey(fire_key)
     end
+
+
+		 
 
     while (event == "MOUSE_BUTTON_PRESSED" and arg == 1 and IsModifierPressed(fast_loot_key) and fastloot) do
 		--OutputLogMessage("event 4")
